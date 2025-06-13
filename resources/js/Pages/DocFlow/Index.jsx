@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../Components/Navbar";
+import Create from "./Create";
 
 const DocFlowIndex = () => {
     const [documents, setDocuments] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const [filter, setFilter] = useState("ALL");
+    const filteredDocuments = documents.filter((doc) => {
+      if (filter === "ALL") return true;
+      return doc.document_type === filter;
+    })
 
     useEffect(() => {
         fetch("/api/documents")
@@ -42,9 +50,12 @@ const DocFlowIndex = () => {
                     <div className="rounded-2xl bg-white p-8 shadow">
                         <div className="mb-8 flex items-center justify-between">
                             <h2 className="text-2xl font-bold text-base-orange">
-                                Overview
+                                DocFlow
                             </h2>
-                            <button className="flex items-center gap-2 rounded bg-base-orange px-4 py-2 text-white transition hover:bg-[#c94e2e]">
+                            <button
+                                onClick={() => setIsModalOpen(true)}
+                                className="flex items-center gap-2 rounded bg-base-orange px-4 py-2 text-white transition hover:bg-[#c94e2e]"
+                            >
                                 <svg
                                     className="h-5 w-5"
                                     fill="none"
@@ -61,7 +72,14 @@ const DocFlowIndex = () => {
                         {/* Stats */}
                         <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
                             {/* Total Documents */}
-                            <div className="flex flex-col items-center rounded-lg border bg-white p-4">
+                            <button
+                                onClick={() => setFilter("ALL")}
+                                className={`flex flex-col items-center rounded-lg border bg-white p-4 transition ${
+                                    filter === "ALL"
+                                        ? "ring-2 ring-base-orange"
+                                        : ""
+                                }`}
+                            >
                                 <svg
                                     className="mb-2 h-10 w-10 text-base-orange"
                                     fill="none"
@@ -77,10 +95,17 @@ const DocFlowIndex = () => {
                                 <div className="text-2xl font-bold text-base-orange">
                                     {documents.length}
                                 </div>
-                            </div>
+                            </button>
 
                             {/* Proposal */}
-                            <div className="flex flex-col items-center rounded-lg border bg-white p-4">
+                            <button
+                                onClick={() => setFilter("Proposal")}
+                                className={`flex flex-col items-center rounded-lg border bg-white p-4 transition ${
+                                    filter === "Proposal"
+                                        ? "ring-2 ring-orange-400"
+                                        : ""
+                                }`}
+                            >
                                 <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-orange-100">
                                     <span className="text-lg font-bold text-orange-600">
                                         P
@@ -92,10 +117,17 @@ const DocFlowIndex = () => {
                                 <div className="text-2xl font-bold text-orange-600">
                                     {totalProposal}
                                 </div>
-                            </div>
+                            </button>
 
                             {/* BRD */}
-                            <div className="flex flex-col items-center rounded-lg border bg-white p-4">
+                            <button
+                                onClick={() => setFilter("BRD")}
+                                className={`flex flex-col items-center rounded-lg border bg-white p-4 transition ${
+                                    filter === "BRD"
+                                        ? "ring-2 ring-blue-400"
+                                        : ""
+                                }`}
+                            >
                                 <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
                                     <span className="text-lg font-bold text-blue-600">
                                         B
@@ -107,10 +139,17 @@ const DocFlowIndex = () => {
                                 <div className="text-2xl font-bold text-blue-600">
                                     {totalBRD}
                                 </div>
-                            </div>
+                            </button>
 
                             {/* UAT */}
-                            <div className="flex flex-col items-center rounded-lg border bg-white p-4">
+                            <button
+                                onClick={() => setFilter("UAT")}
+                                className={`flex flex-col items-center rounded-lg border bg-white p-4 transition ${
+                                    filter === "UAT"
+                                        ? "ring-2 ring-green-400"
+                                        : ""
+                                }`}
+                            >
                                 <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
                                     <span className="text-lg font-bold text-green-600">
                                         U
@@ -122,7 +161,7 @@ const DocFlowIndex = () => {
                                 <div className="text-2xl font-bold text-green-600">
                                     {totalUAT}
                                 </div>
-                            </div>
+                            </button>
                         </div>
 
                         {/* Tabs */}
@@ -165,7 +204,7 @@ const DocFlowIndex = () => {
 
                         {/* Document List */}
                         <div className="flex flex-col gap-4">
-                            {documents.map((doc) => (
+                            {filteredDocuments.map((doc) => (
                                 <div
                                     key={doc.id}
                                     className="flex items-center justify-between rounded-lg border bg-white p-4"
@@ -219,6 +258,8 @@ const DocFlowIndex = () => {
                     </div>
                 </div>
             </div>
+
+            {isModalOpen && <Create onClose={() => setIsModalOpen(false)} />}
         </>
     );
 };
