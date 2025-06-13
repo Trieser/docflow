@@ -48,7 +48,7 @@ const Create = ({ onClose }) => {
   const navigate = useNavigate();
 
   const handleSelect = (type) => {
-    navigate("/documents/new", { state: { document_type: type } });
+    navigate("/documents/input", { state: { document_type: type } });
     onClose();
   };
 
